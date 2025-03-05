@@ -25,32 +25,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/west2-online/DomTok/app/commodity/domain/model"
-	"github.com/west2-online/DomTok/app/commodity/domain/repository"
-	"github.com/west2-online/DomTok/config"
-	"github.com/west2-online/DomTok/pkg/base/client"
-	"github.com/west2-online/DomTok/pkg/logger"
-	"github.com/west2-online/DomTok/pkg/utils"
 )
-
-var _db repository.CommodityDB
-
-func initDB() {
-	gorm, err := client.InitMySQL()
-	if err != nil {
-		panic(err)
-	}
-	_db = NewCommodityDB(gorm)
-}
-
-func initConfig() bool {
-	if !utils.EnvironmentEnable() {
-		return false
-	}
-	logger.Ignore()
-	config.Init("commodity-category-test")
-	initDB()
-	return true
-}
 
 func buildTestModelCategory(t *testing.T) *model.Category {
 	t.Helper()
@@ -113,8 +88,10 @@ func TestCommodityDB_ViewCategory(t *testing.T) {
 		return
 	}
 	ctx := context.Background()
+	pagesize := 1
+	pagenum := 10
 	Convey("TestCommodityDB_ViewCategory", t, func() {
-		resp, err := _db.ViewCategory(ctx, 1, 10)
+		resp, err := _db.ViewCategory(ctx, pagesize, pagenum)
 		So(err, ShouldBeNil)
 		So(resp, ShouldNotBeEmpty)
 	})
